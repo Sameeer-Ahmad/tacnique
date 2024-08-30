@@ -81,7 +81,6 @@ const UserList = () => {
   const currentUsers = [...users]
     .reverse()
     .slice(indexOfFirstUser, indexOfLastUser);
-
   const totalPages = Math.ceil(users.length / usersPerPage);
 
   return (
