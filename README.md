@@ -1,5 +1,3 @@
-# Project Name
-
 ## Running the frontend
 
  Navigate to the frontend directory:
