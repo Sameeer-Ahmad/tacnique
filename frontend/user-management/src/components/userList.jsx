@@ -185,5 +185,4 @@ const UserList = () => {
     </VStack>
   );
 };
-
 export default UserList;
