@@ -15,7 +15,7 @@ import {
   useToast
 } from "@chakra-ui/react";
 import { AddIcon, EditIcon, DeleteIcon } from "@chakra-ui/icons";
-import UserForm from "./UserForm";
+import UserForm from "./userForm";
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
