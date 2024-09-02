@@ -98,21 +98,22 @@ useEffect(() => {
   const totalPages = Math.ceil(users.length / usersPerPage);
 
   return (
-    <VStack spacing={4} p={5} align="stretch" bgGradient="linear(to-r, green.100, yellow.400, red.300)">
-      <Text fontSize="2xl" textAlign="center" fontWeight="bold">
+    <VStack spacing={4} p={5} align="stretch"  width={["214%", "100%", "100%"]}  bgGradient="linear(to-r, green.100, yellow.400, red.300)">
+      <Text fontSize={{ base: "lg", md: "xl", lg: "2xl" }} textAlign="center" fontWeight="bold">
         User List
       </Text>
-      <Flex align="center" gap={4} mb={4} ml={1}>
+      <Flex direction={{ base: "column", md: "row" }} align="center" gap={4} mb={4} ml={1}>
         <Text fontWeight="bold">Add a new user</Text>
         <IconButton
           icon={<AddIcon />}
           colorScheme="teal"
           aria-label="Add User"
           onClick={handleAddUser}
+          size={{ base: "sm", md: "md" }}
         />
       </Flex>
       {loading ? (
-        <Table variant="simple">
+        <Table variant="simple" size="sm" overflowX="auto">
           <Thead>
             <Tr>
               <Th>Name</Th>
@@ -137,7 +138,7 @@ useEffect(() => {
       ) : error ? (
         <Text color="red.500" textAlign="center">{error}</Text>
       ) : (
-        <Table variant="simple">
+        <Table variant="simple" size="sm" overflowX="auto">
           <Thead>
             <Tr>
               <Th>Name</Th>
@@ -155,19 +156,22 @@ useEffect(() => {
                 <Td>{user.email}</Td>
                 <Td>{user.website}</Td>
                 <Td>
-                  <IconButton
-                    icon={<EditIcon />}
-                    colorScheme="blue"
-                    aria-label="Edit User"
-                    onClick={() => handleEditUser(user)}
-                    mr={2}
-                  />
-                  <IconButton
-                    icon={<DeleteIcon />}
-                    colorScheme="red"
-                    aria-label="Delete User"
-                    onClick={() => handleDeleteUser(user.id)}
-                  />
+                  <HStack spacing={2} justify="flex-start" wrap="wrap">
+                    <IconButton
+                      icon={<EditIcon />}
+                      colorScheme="blue"
+                      aria-label="Edit User"
+                      onClick={() => handleEditUser(user)}
+                      size="sm"
+                    />
+                    <IconButton
+                      icon={<DeleteIcon />}
+                      colorScheme="red"
+                      aria-label="Delete User"
+                      onClick={() => handleDeleteUser(user.id)}
+                      size="sm"
+                    />
+                  </HStack>
                 </Td>
               </Tr>
             ))}
@@ -178,6 +182,7 @@ useEffect(() => {
         <Button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
+          size="sm"
         >
           Previous
         </Button>
@@ -185,10 +190,9 @@ useEffect(() => {
           Page {currentPage} of {totalPages}
         </Text>
         <Button
-          onClick={() =>
-            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-          }
+          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
           disabled={currentPage === totalPages}
+          size="sm"
         >
           Next
         </Button>
@@ -201,6 +205,8 @@ useEffect(() => {
       />
     </VStack>
   );
+  
+  
 };
 
 export default UserList;
