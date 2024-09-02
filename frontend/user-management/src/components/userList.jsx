@@ -3,15 +3,18 @@ import axios from "axios";
 import {
   Button,
   VStack,
-  Box,
   Text,
   IconButton,
   useDisclosure,
   Flex,
-  SimpleGrid,
   HStack,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
   Skeleton,
-  SkeletonText,
   useToast
 } from "@chakra-ui/react";
 import { AddIcon, EditIcon, DeleteIcon } from "@chakra-ui/icons";
@@ -27,23 +30,34 @@ const UserList = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const response = await axios.get(
-          "https://jsonplaceholder.typicode.com/users"
-        );
+useEffect(() => {
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const storedUsers = localStorage.getItem("users");
+      if (storedUsers) {
+        setUsers(JSON.parse(storedUsers));
+      } else {
+        const response = await axios.get("https://jsonplaceholder.typicode.com/users");
         setUsers(response.data);
-      } catch (error) {
-        setError("Error fetching users.");
-      } finally {
-        setLoading(false);
+        localStorage.setItem("users", JSON.stringify(response.data));
       }
-    };
-    fetchUsers();
-  }, []);
+    } catch (error) {
+      setError("Error fetching users.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchUsers();
+}, []);
+
+useEffect(() => {
+  localStorage.setItem("users", JSON.stringify(users));
+}, [users]);
+
 
   const handleAddUser = () => {
     setEditUser(null);
@@ -84,7 +98,7 @@ const UserList = () => {
   const totalPages = Math.ceil(users.length / usersPerPage);
 
   return (
-    <VStack spacing={4} p={5} align="stretch" bgGradient='linear(to-r, green.100, yellow.400, red.300)'>
+    <VStack spacing={4} p={5} align="stretch" bgGradient="linear(to-r, green.100, yellow.400, red.300)">
       <Text fontSize="2xl" textAlign="center" fontWeight="bold">
         User List
       </Text>
@@ -98,64 +112,67 @@ const UserList = () => {
         />
       </Flex>
       {loading ? (
-        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
-          {Array.from({ length: usersPerPage }).map((_, index) => (
-            <Box
-              key={index}
-              p={4}
-              borderWidth={1}
-              borderRadius="md"
-              boxShadow="md"
-              background="gray.300"
-            >
-              <Skeleton height="60px" mb={4} />
-              <Skeleton height="20px" mb={2} />
-              <Skeleton height="20px" mb={2} />
-              <Skeleton height="20px" />
-            </Box>
-          ))}
-        </SimpleGrid>
+        <Table variant="simple">
+          <Thead>
+            <Tr>
+              <Th>Name</Th>
+              <Th>Username</Th>
+              <Th>Email</Th>
+              <Th>Website</Th>
+              <Th>Actions</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {Array.from({ length: usersPerPage }).map((_, index) => (
+              <Tr key={index}>
+                <Td><Skeleton height="20px" /></Td>
+                <Td><Skeleton height="20px" /></Td>
+                <Td><Skeleton height="20px" /></Td>
+                <Td><Skeleton height="20px" /></Td>
+                <Td><Skeleton height="20px" /></Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
       ) : error ? (
         <Text color="red.500" textAlign="center">{error}</Text>
       ) : (
-        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
-          {currentUsers.map((user) => (
-            <Box
-              key={user.id}
-              p={4}
-              borderWidth={1}
-              borderRadius="md"
-              boxShadow="md"
-              background="gray.300"
-            >
-              <Flex direction="column" h="full" justify="space-between">
-                <Box>
-                  <Text fontWeight="bold">Name: {user.name}</Text>
-                  <Text>Username: {user.username}</Text>
-                  <Text>Email: {user.email}</Text>
-                  <Text>Website: {user.website}</Text>
-                </Box>
-                <Box mt={4}>
-                  <Flex justify="space-between">
-                    <IconButton
-                      icon={<EditIcon />}
-                      colorScheme="blue"
-                      aria-label="Edit User"
-                      onClick={() => handleEditUser(user)}
-                    />
-                    <IconButton
-                      icon={<DeleteIcon />}
-                      colorScheme="red"
-                      aria-label="Delete User"
-                      ml={2}
-                      onClick={() => handleDeleteUser(user.id)}
-                    />
-                  </Flex>
-                </Box>
-              </Flex>
-            </Box>
-          ))}
-        </SimpleGrid>
+        <Table variant="simple">
+          <Thead>
+            <Tr>
+              <Th>Name</Th>
+              <Th>Username</Th>
+              <Th>Email</Th>
+              <Th>Website</Th>
+              <Th>Actions</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {currentUsers.map((user) => (
+              <Tr key={user.id}>
+                <Td>{user.name}</Td>
+                <Td>{user.username}</Td>
+                <Td>{user.email}</Td>
+                <Td>{user.website}</Td>
+                <Td>
+                  <IconButton
+                    icon={<EditIcon />}
+                    colorScheme="blue"
+                    aria-label="Edit User"
+                    onClick={() => handleEditUser(user)}
+                    mr={2}
+                  />
+                  <IconButton
+                    icon={<DeleteIcon />}
+                    colorScheme="red"
+                    aria-label="Delete User"
+                    onClick={() => handleDeleteUser(user.id)}
+                  />
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
       )}
       <HStack spacing={4} mt={4} justify="center">
         <Button
@@ -185,4 +202,5 @@ const UserList = () => {
     </VStack>
   );
 };
+
 export default UserList;
